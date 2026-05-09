@@ -14,8 +14,8 @@ public class Room {
 
     public boolean attemptAnswer(String playerAnswer) {
         if (playerAnswer == null) return false;
-        String normalized = playerAnswer.toLowerCase().trim();
-        return normalized.equals(gameMaster.getRiddle().getAnswer());
+        String comp = playerAnswer.toLowerCase().trim();
+        return comp.equals(gameMaster.getRiddle().getAnswer());
     }
 
     public void unlock() {
