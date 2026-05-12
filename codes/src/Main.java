@@ -1,9 +1,11 @@
 import panels.GamePanel;
+import panels.MainMenu;
 
 import javax.swing.*;
 import java.awt.Dimension;
 
 public class Main {
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             try {
@@ -26,5 +28,8 @@ public class Main {
 
             System.out.println("🖥️ Frame visible. Game should appear.");
         });
+
+
+
     }
 }
