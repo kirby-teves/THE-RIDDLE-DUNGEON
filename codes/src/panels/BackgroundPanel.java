@@ -15,7 +15,6 @@ class BackgroundPanel extends JPanel {
     public BackgroundPanel(String fileName) {
         try {
             BufferedImage originalImage = ImageIO.read(new File(fileName));
-            // Apply the blur effect before saving it to the backgroundImage variable
             this.backgroundImage = blurImage(originalImage);
         } catch (Exception e) {
             e.printStackTrace();
