@@ -1,8 +1,6 @@
-import panels.GamePanel;
 import panels.MainMenu;
 
 import javax.swing.*;
-import java.awt.Dimension;
 
 public class Main {
 
@@ -16,20 +14,12 @@ public class Main {
 
             JFrame frame = new JFrame("The Riddle Dungeon");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-            GamePanel game = new GamePanel();
-            frame.add(game);
-
-            // FORCE MINIMUM SIZE SO WINDOW ISN'T EMPTY
-            frame.setMinimumSize(new Dimension(700, 550));
-            frame.setSize(700, 550); // Or use pack() after ensuring content has size
+            frame.setSize(1500, 1000);
             frame.setLocationRelativeTo(null);
+
+            new MainMenu(frame);
+
             frame.setVisible(true);
-
-            System.out.println("🖥️ Frame visible. Game should appear.");
         });
-
-
-
     }
 }
