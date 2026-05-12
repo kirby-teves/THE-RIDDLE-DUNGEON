@@ -1,3 +1,5 @@
+package model;
+
 public enum Difficulty {
     EASY(3),
     MEDIUM(4),

@@ -1,3 +1,6 @@
+package gamemasters;
+import model.IRiddle;
+
 public abstract class GameMaster {
     private final String name;
     private final IRiddle riddle;

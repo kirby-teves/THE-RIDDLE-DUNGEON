@@ -1,3 +1,6 @@
+package gamemasters;
+import model.IRiddle;
+
 public class Kirby extends GameMaster {
     public Kirby(IRiddle riddle) { super("Kirby", riddle); }
     @Override

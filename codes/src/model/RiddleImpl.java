@@ -1,3 +1,5 @@
+package model;
+
 public class RiddleImpl implements IRiddle {
     private final String question;
     private final String answer;

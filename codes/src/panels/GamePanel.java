@@ -1,7 +1,20 @@
+package panels;
+
+import model.Player;
+import model.RiddleImpl;
+import model.Room;
+import gamemasters.Awit;
+import gamemasters.Deanver;
+import gamemasters.Kirby;
+import gamemasters.Jojan;
+import gamemasters.Hayes;
+import gamemasters.Patrick;
+
+
 import javax.swing.*;
 import java.awt.*;
 
-public class RiddleDungeonGUI extends JPanel {
+public class GamePanel extends JPanel {
 
     private JPanel gamePanel; // Must be named "gamePanel" in .form file
 
@@ -17,7 +30,7 @@ public class RiddleDungeonGUI extends JPanel {
     private Player player;
     private Room[] rooms;
 
-    public RiddleDungeonGUI() {
+    public GamePanel() {
         System.out.println(" RiddleDungeonGUI constructor started...");
 
         // Set layout for outer panel

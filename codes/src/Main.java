@@ -1,3 +1,5 @@
+import panels.GamePanel;
+
 import javax.swing.*;
 import java.awt.Dimension;
 
@@ -13,7 +15,7 @@ public class Main {
             JFrame frame = new JFrame("The Riddle Dungeon");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-            RiddleDungeonGUI game = new RiddleDungeonGUI();
+            GamePanel game = new GamePanel();
             frame.add(game);
 
             // FORCE MINIMUM SIZE SO WINDOW ISN'T EMPTY

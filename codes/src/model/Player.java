@@ -1,3 +1,5 @@
+package model;
+
 public class Player {
     private int hearts;
     private int currentRoomIndex;
