@@ -110,13 +110,80 @@ public class RiddleDungeonGUI extends JPanel {
     }
 
     private void createRooms() {
+
         rooms = new Room[6];
-        rooms[0] = new Room(1, "Easy", new Kirby(new RiddleImpl("I have keys but no locks.", "piano", "It makes music.")));
-        rooms[1] = new Room(2, "Easy", new Deanver(new RiddleImpl("What has holes but holds water?", "sponge", "Used for cleaning.")));
-        rooms[2] = new Room(3, "Medium", new Jojan(new RiddleImpl("Echo riddle...", "echo", "Shout in hallway.")));
-        rooms[3] = new Room(4, "Medium", new Hayes(new RiddleImpl("Chain riddle...", "chain", "Iron links.")));
-        rooms[4] = new Room(5, "Hard", new Awit(new RiddleImpl("Shadow riddle...", "shadow", "Follows you.")));
-        rooms[5] = new Room(6, "Hard", new Patrick(new RiddleImpl("Gate riddle...", "gate", "Exit door.")));
+
+        rooms[0] = new Room(
+                1,
+                "Easy",
+                new Kirby(new RiddleImpl(
+                        "I have keys but no locks.",
+                        "piano",
+                        "It makes music."
+                )),
+                "A dusty room filled with strange melodies.",
+                "Bronze Key"
+        );
+
+        rooms[1] = new Room(
+                2,
+                "Easy",
+                new Deanver(new RiddleImpl(
+                        "What has holes but holds water?",
+                        "sponge",
+                        "Used for cleaning."
+                )),
+                "Water drips from the ceiling.",
+                "Small Potion"
+        );
+
+        rooms[2] = new Room(
+                3,
+                "Medium",
+                new Jojan(new RiddleImpl(
+                        "Echo riddle...",
+                        "echo",
+                        "Shout in hallway."
+                )),
+                "Your voice bounces across the walls.",
+                "Silver Key"
+        );
+
+        rooms[3] = new Room(
+                4,
+                "Medium",
+                new Hayes(new RiddleImpl(
+                        "Chain riddle...",
+                        "chain",
+                        "Iron links."
+                )),
+                "Chains hang from the darkness.",
+                "Magic Scroll"
+        );
+
+        rooms[4] = new Room(
+                5,
+                "Hard",
+                new Awit(new RiddleImpl(
+                        "Shadow riddle...",
+                        "shadow",
+                        "Follows you."
+                )),
+                "The room is unnaturally cold.",
+                "Golden Key"
+        );
+
+        rooms[5] = new Room(
+                6,
+                "Hard",
+                new Patrick(new RiddleImpl(
+                        "Gate riddle...",
+                        "gate",
+                        "Exit door."
+                )),
+                "A massive gate blocks your escape.",
+                "Freedom"
+        );
     }
 
     private void loadLevel() {
@@ -143,7 +210,13 @@ public class RiddleDungeonGUI extends JPanel {
         }
 
         if (txtRiddle != null) {
-            txtRiddle.setText(current.getGreeting() + "\n\n" + current.getRiddleQuestion());
+            txtRiddle.setText(
+                    current.getGreeting()
+                            + "\n\n"
+                            + current.getDescription()
+                            + "\n\n"
+                            + current.getRiddleQuestion()
+            );
         }
 
         if (lblHint != null) {
