@@ -80,7 +80,10 @@ public class GamePanel extends JPanel {
         txtRiddle.setFont(new Font("Serif", Font.ITALIC, 16));
         txtRiddle.setBackground(new Color(30, 30, 40));
         txtRiddle.setForeground(Color.CYAN);
+        txtRiddle.setPreferredSize(new Dimension(600, 200)); // Add this
+        txtRiddle.setMinimumSize(new Dimension(400, 150)); // Add this
         JScrollPane scroll = new JScrollPane(txtRiddle);
+        scroll.setPreferredSize(new Dimension(600, 200)); // Add this
         gamePanel.add(scroll, BorderLayout.CENTER);
 
         lblHint = new JLabel("Hint: ...");
@@ -123,81 +126,16 @@ public class GamePanel extends JPanel {
     }
 
     private void createRooms() {
-
         rooms = new Room[6];
-
-        rooms[0] = new Room(
-                1,
-                "Easy",
-                new Kirby(new RiddleImpl(
-                        "I have keys but no locks.",
-                        "piano",
-                        "It makes music."
-                )),
-                "A dusty room filled with strange melodies.",
-                "Bronze Key"
-        );
-
-        rooms[1] = new Room(
-                2,
-                "Easy",
-                new Deanver(new RiddleImpl(
-                        "What has holes but holds water?",
-                        "sponge",
-                        "Used for cleaning."
-                )),
-                "Water drips from the ceiling.",
-                "Small Potion"
-        );
-
-        rooms[2] = new Room(
-                3,
-                "Medium",
-                new Jojan(new RiddleImpl(
-                        "Echo riddle...",
-                        "echo",
-                        "Shout in hallway."
-                )),
-                "Your voice bounces across the walls.",
-                "Silver Key"
-        );
-
-        rooms[3] = new Room(
-                4,
-                "Medium",
-                new Hayes(new RiddleImpl(
-                        "Chain riddle...",
-                        "chain",
-                        "Iron links."
-                )),
-                "Chains hang from the darkness.",
-                "Magic Scroll"
-        );
-
-        rooms[4] = new Room(
-                5,
-                "Hard",
-                new Awit(new RiddleImpl(
-                        "Shadow riddle...",
-                        "shadow",
-                        "Follows you."
-                )),
-                "The room is unnaturally cold.",
-                "Golden Key"
-        );
-
-        rooms[5] = new Room(
-                6,
-                "Hard",
-                new Patrick(new RiddleImpl(
-                        "Gate riddle...",
-                        "gate",
-                        "Exit door."
-                )),
-                "A massive gate blocks your escape.",
-                "Freedom"
-        );
+            // Each GameMaster constructor randomly selects from their riddle pool
+        rooms[0] = new Room(1, "Easy", new Kirby());
+        rooms[1] = new Room(2, "Easy", new Deanver());
+        rooms[2] = new Room(3, "Medium", new Jojan());
+        rooms[3] = new Room(4, "Medium", new Hayes());
+        rooms[4] = new Room(5, "Hard", new Awit());
+        rooms[5] = new Room(6, "Hard", new Patrick());
     }
+
 
     private void loadLevel() {
         if (player.hasWon()) {
@@ -223,17 +161,11 @@ public class GamePanel extends JPanel {
         }
 
         if (txtRiddle != null) {
-            txtRiddle.setText(
-                    current.getGreeting()
-                            + "\n\n"
-                            + current.getDescription()
-                            + "\n\n"
-                            + current.getRiddleQuestion()
-            );
+            txtRiddle.setText(current.getGreeting() + "\n\n" + current.getRiddleQuestion());
         }
 
         if (lblHint != null) {
-            lblHint.setText("Hint: " + current.getRiddleHint());
+            lblHint.setText(current.getRiddleHint());
         }
 
         if (txtInput != null) txtInput.setText("");
@@ -301,8 +233,8 @@ public class GamePanel extends JPanel {
 
         JButton restart = new JButton("Play Again");
         restart.addActionListener(e -> {
-            initNewGame();
-            // Re-add gamePanel
+            // Reset game with NEW random riddles
+            initNewGame();  // ← This calls createRooms() which picks new random riddles
             removeAll();
             setLayout(new BorderLayout());
             if (gamePanel != null) {

@@ -1,4 +1,7 @@
 // Room.java
+package model;
+import gamemasters.GameMaster;
+
 public class Room {
     private final int roomNumber;
     private final String difficultyLabel; // "Easy", "Medium", "Hard"
@@ -10,16 +13,16 @@ public class Room {
 
     private int attempts;
 
-    private String description;
-    private String reward;
+//    private String description;
+//    private String reward;
 
-    public Room(int roomNumber, String difficultyLabel, GameMaster gameMaster, String description, String reward) {
+    public Room(int roomNumber, String difficultyLabel, GameMaster gameMaster) {
         this.roomNumber = roomNumber;
         this.difficultyLabel = difficultyLabel;
         this.gameMaster = gameMaster;
 
-        this.description = description;
-        this.reward = reward;
+//        this.description = description;
+//        this.reward = reward;
 
         this.isLocked = true;
         this.visited = false;
@@ -91,13 +94,13 @@ public class Room {
         return difficultyLabel;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public String getReward() {
-        return reward;
-    }
+//    public String getDescription() {
+//        return description;
+//    }
+//
+//    public String getReward() {
+//        return reward;
+//    }
 
     public String getMasterName() {
         return gameMaster.getName();
