@@ -1,6 +1,3 @@
-package gamemasters;
-import model.IRiddle;
-
 public class Deanver extends GameMaster {
     public Deanver(IRiddle riddle) { super("Deanver", riddle); }
     @Override

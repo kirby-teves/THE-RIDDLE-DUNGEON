@@ -1,7 +1,4 @@
-package model;
-
-import gamemasters.GameMaster;
-
+// Room.java
 public class Room {
     private final int roomNumber;
     private final String difficultyLabel; // "Easy", "Medium", "Hard"
