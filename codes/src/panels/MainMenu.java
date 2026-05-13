@@ -36,7 +36,7 @@ public class MainMenu {
         });
 
         loadButton.addActionListener(e -> {
-            frame.setContentPane(new MapPanel(frame, 0));
+            frame.setContentPane(new MapPanel());
             frame.setSize(1200, 700);
             frame.setLocationRelativeTo(null);
             frame.revalidate(); frame.repaint();
