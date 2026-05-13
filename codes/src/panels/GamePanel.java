@@ -1,7 +1,6 @@
 package panels;
 
 import model.Player;
-import model.RiddleImpl;
 import model.Room;
 import gamemasters.Awit;
 import gamemasters.Deanver;
@@ -13,121 +12,77 @@ import gamemasters.Patrick;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 
 public class GamePanel extends JPanel {
 
-    private JPanel gamePanel; // Must be named "gamePanel" in .form file
-
-    // Components inside gamePanel — MUST match field names in .form
+    // Fields MUST match Component Tree exactly
+    private JPanel gamePanel;
+    private JLabel title;
     private JLabel lblHearts;
-    private JLabel lblRoomInfo;
     private JTextArea txtRiddle;
-    private JLabel lblHint;
+    private JLabel lblRoomInfo;
+    private JLabel answer;
+    private JButton SOLVEButton;
     private JTextField txtInput;
-    private JButton btnSubmit;
-    private JLabel lblFeedback;
+    private JTextArea lblHint;
+    private JButton Map;
 
     private Player player;
     private Room[] rooms;
+    private boolean[] completedRooms;
+    private boolean isProcessingAnswer = false;
+
+    // Navigation callback to return to menu
+    private Runnable onReturnToMenu;
 
     public GamePanel() {
-        System.out.println(" RiddleDungeonGUI constructor started...");
+        initializeGame();
+    }
 
-        // Set layout for outer panel
+    // Setter for navigation callback
+    public void setOnReturnToMenu(Runnable callback) {
+        this.onReturnToMenu = callback;
+    }
+
+    public void initializeGame() {
+        setBackground(new Color(43, 45, 48));
         setLayout(new BorderLayout());
-        setBackground(Color.DARK_GRAY); // So we can see if this panel appears
+        setPreferredSize(new Dimension(900, 650));
 
-        initNewGame();
-
-        // IMPORTANT: If gamePanel is null, create a fallback UI manually
-        if (gamePanel == null) {
-            System.err.println("⚠️ WARNING: gamePanel is NULL! Creating fallback UI...");
-            createFallbackUI();
-        } else {
-            System.out.println("✅ gamePanel found. Adding to root...");
+        if (gamePanel != null) {
+            gamePanel.setBackground(new Color(43, 45, 48));
             add(gamePanel, BorderLayout.CENTER);
         }
 
-        setupEventListeners();
+        player = new Player();
+        completedRooms = new boolean[6];
+        createRooms();
+        setupListeners();
         loadLevel();
 
-        System.out.println(" RiddleDungeonGUI initialized.");
+        revalidate();
+        repaint();
     }
 
-    // Fallback UI in case GUI Designer binding failed
-    private void createFallbackUI() {
-        gamePanel = new JPanel(new BorderLayout(10, 10));
-        gamePanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        gamePanel.setBackground(new Color(20, 20, 30));
+    private void setupListeners() {
+        if (SOLVEButton != null) SOLVEButton.addActionListener(e -> checkAnswer());
+        if (txtInput != null) txtInput.addActionListener(e -> checkAnswer());
+        if (Map != null) Map.addActionListener(e -> {
+            int completed = countCompletedRooms();
+            JOptionPane.showMessageDialog(this, "️ Dungeon Map\nRooms completed: " + completed + "/6");
+        });
 
-        // Top
-        JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        top.setOpaque(false);
-        lblHearts = new JLabel("❤️❤️❤️");
-        lblHearts.setForeground(Color.RED);
-        lblRoomInfo = new JLabel("Room 1 | Easy");
-        lblRoomInfo.setForeground(Color.WHITE);
-        top.add(lblHearts);
-        top.add(Box.createHorizontalStrut(20));
-        top.add(lblRoomInfo);
-        gamePanel.add(top, BorderLayout.NORTH);
-
-        // Center
-        txtRiddle = new JTextArea("Welcome to the dungeon...\nSolve riddles to escape!");
-        txtRiddle.setEditable(false);
-        txtRiddle.setLineWrap(true);
-        txtRiddle.setWrapStyleWord(true);
-        txtRiddle.setFont(new Font("Serif", Font.ITALIC, 16));
-        txtRiddle.setBackground(new Color(30, 30, 40));
-        txtRiddle.setForeground(Color.CYAN);
-        txtRiddle.setPreferredSize(new Dimension(600, 200)); // Add this
-        txtRiddle.setMinimumSize(new Dimension(400, 150)); // Add this
-        JScrollPane scroll = new JScrollPane(txtRiddle);
-        scroll.setPreferredSize(new Dimension(600, 200)); // Add this
-        gamePanel.add(scroll, BorderLayout.CENTER);
-
-        lblHint = new JLabel("Hint: ...");
-        lblHint.setForeground(Color.ORANGE);
-        gamePanel.add(lblHint, BorderLayout.SOUTH);
-
-        // Bottom
-        JPanel bottom = new JPanel(new BorderLayout());
-        bottom.setOpaque(false);
-        JPanel inputRow = new JPanel(new FlowLayout());
-        inputRow.setOpaque(false);
-        inputRow.add(new JLabel("Answer:"));
-        txtInput = new JTextField(20);
-        btnSubmit = new JButton("Unlock Door");
-        inputRow.add(txtInput);
-        inputRow.add(btnSubmit);
-        bottom.add(inputRow, BorderLayout.NORTH);
-
-        lblFeedback = new JLabel(" ");
-        lblFeedback.setOpaque(true);
-        bottom.add(lblFeedback, BorderLayout.CENTER);
-        gamePanel.add(bottom, BorderLayout.SOUTH);
-
-        // Add fallback gamePanel to root
-        add(gamePanel, BorderLayout.CENTER);
     }
 
-    private void setupEventListeners() {
-        if (btnSubmit != null) {
-            btnSubmit.addActionListener(e -> checkAnswer());
-        }
-        if (txtInput != null) {
-            txtInput.addActionListener(e -> checkAnswer());
-        }
-    }
-
-    private void initNewGame() {
-        player = new Player();
-        createRooms();
+    private int countCompletedRooms() {
+        int count = 0;
+        for (boolean b : completedRooms) if (b) count++;
+        return count;
     }
 
     private void createRooms() {
         rooms = new Room[6];
-            // Each GameMaster constructor randomly selects from their riddle pool
         rooms[0] = new Room(1, "Easy", new Kirby());
         rooms[1] = new Room(2, "Easy", new Deanver());
         rooms[2] = new Room(3, "Medium", new Jojan());
@@ -136,124 +91,107 @@ public class GamePanel extends JPanel {
         rooms[5] = new Room(6, "Hard", new Patrick());
     }
 
-
-    private void loadLevel() {
-        if (player.hasWon()) {
-            showEndScreen(true);
-            return;
-        }
-        if (!player.isAlive()) {
-            showEndScreen(false);
-            return;
-        }
+    public void loadLevel() {
+        if (player.hasWon()) { showEndScreen(true); return; }
+        if (!player.isAlive()) { showEndScreen(false); return; }
 
         Room current = rooms[player.getCurrentRoomIndex()];
         player.adjustHeartsForRoom(current.getRoomNumber());
 
-        if (lblHearts != null) {
-            StringBuilder hearts = new StringBuilder();
-            for (int i = 0; i < player.getHearts(); i++) hearts.append("❤️");
-            lblHearts.setText(hearts.toString());
-        }
+        StringBuilder hearts = new StringBuilder();
+        for (int i = 0; i < player.getHearts(); i++) hearts.append("❤️");
+        if (lblHearts != null) lblHearts.setText(hearts.toString());
 
-        if (lblRoomInfo != null) {
-            lblRoomInfo.setText(String.format("Room %d | %s", current.getRoomNumber(), current.getDifficultyLabel()));
-        }
-
-        if (txtRiddle != null) {
-            txtRiddle.setText(current.getGreeting() + "\n\n" + current.getRiddleQuestion());
-        }
-
+        if (lblRoomInfo != null) lblRoomInfo.setText("Room " + current.getRoomNumber() + " | " + current.getDifficultyLabel());
+        if (txtRiddle != null) txtRiddle.setText(current.getGreeting() + "\n\n" + current.getRiddleQuestion());
         if (lblHint != null) {
             lblHint.setText(current.getRiddleHint());
+            lblHint.setForeground(Color.ORANGE);
+            lblHint.setBackground(new Color(43, 45, 48));
         }
+        if (txtInput != null) { txtInput.setText(""); txtInput.requestFocus(); }
 
-        if (txtInput != null) txtInput.setText("");
-        if (lblFeedback != null) {
-            lblFeedback.setText(" ");
-            lblFeedback.setBackground(null);
-        }
+        isProcessingAnswer = false;
+        revalidate(); repaint();
     }
 
     private void checkAnswer() {
-        if (player.hasWon() || !player.isAlive()) return;
+        if (isProcessingAnswer || player.hasWon() || !player.isAlive()) return;
+        isProcessingAnswer = true;
 
         Room current = rooms[player.getCurrentRoomIndex()];
         String ans = txtInput.getText();
 
         if (current.attemptAnswer(ans)) {
-            lblFeedback.setText("CORRECT!");
-            lblFeedback.setForeground(Color.GREEN);
-            lblFeedback.setBackground(new Color(0, 50, 0));
-
-            txtInput.setEnabled(false);
-            btnSubmit.setEnabled(false);
-
-            Timer t = new Timer(1500, e -> {
-                player.nextRoom();
-                txtInput.setEnabled(true);
-                btnSubmit.setEnabled(true);
-                loadLevel();
-            });
-            t.setRepeats(false);
-            t.start();
-
+            completedRooms[player.getCurrentRoomIndex()] = true;
+            if (lblHint != null) { lblHint.setText("✅ CORRECT! The door unlocks..."); lblHint.setForeground(Color.GREEN); }
+            txtInput.setEnabled(false); SOLVEButton.setEnabled(false);
+            Timer t = new Timer(1500, e -> { player.nextRoom(); txtInput.setEnabled(true); SOLVEButton.setEnabled(true); loadLevel(); });
+            t.setRepeats(false); t.start();
         } else {
             player.loseHeart();
-            lblFeedback.setText("WRONG! Lose a heart.");
-            lblFeedback.setForeground(Color.WHITE);
-            lblFeedback.setBackground(new Color(100, 0, 0));
-
-            if (lblHearts != null) {
-                StringBuilder hearts = new StringBuilder();
-                for (int i = 0; i < player.getHearts(); i++) hearts.append("❤️");
-                lblHearts.setText(hearts.toString());
-            }
+            if (lblHint != null) { lblHint.setText("❌ WRONG! You lose a heart."); lblHint.setForeground(Color.RED); }
+            StringBuilder hearts = new StringBuilder();
+            for (int i = 0; i < player.getHearts(); i++) hearts.append("❤️");
+            if (lblHearts != null) lblHearts.setText(hearts.toString());
 
             if (!player.isAlive()) {
-                Timer t = new Timer(1500, e -> loadLevel());
-                t.setRepeats(false);
-                t.start();
+                Timer t = new Timer(1500, e -> loadLevel()); t.setRepeats(false); t.start();
+            } else {
+                Timer t = new Timer(1200, e -> {
+                    if (lblHint != null) { lblHint.setForeground(Color.ORANGE); lblHint.setText(current.getRiddleHint()); }
+                    isProcessingAnswer = false;
+                });
+                t.setRepeats(false); t.start();
             }
         }
     }
 
+    // Fixed: Uses JDialog instead of removeAll() to preserve form bindings
     private void showEndScreen(boolean won) {
-        removeAll();
-        setLayout(new GridBagLayout());
-        setBackground(Color.BLACK);
+        // Get the parent window
+        Window parentWindow = SwingUtilities.getWindowAncestor(this);
 
-        JLabel msg = new JLabel(won ? "ESCAPED!" : "YOU DIED");
-        msg.setFont(new Font("Serif", Font.BOLD, 40));
+        // Create dialog with correct constructor
+        JDialog dialog = new JDialog(parentWindow, "Game Over", Dialog.ModalityType.APPLICATION_MODAL);
+
+        dialog.setLayout(new GridBagLayout());
+        dialog.getContentPane().setBackground(new Color(15, 15, 20));
+        dialog.setUndecorated(true);
+        dialog.getRootPane().setBorder(BorderFactory.createLineBorder(new Color(212, 175, 55), 2));
+
+        JLabel msg = new JLabel(won ? "🏆 ESCAPED!" : "💀 YOU DIED");
+        msg.setFont(new Font("Serif", Font.BOLD, 36));
         msg.setForeground(won ? Color.YELLOW : Color.RED);
 
-        JLabel sub = new JLabel(won ? "You escaped!" : "Game Over.");
-        sub.setFont(new Font("Serif", Font.PLAIN, 20));
+        JLabel sub = new JLabel(won ? "You conquered the dungeon!" : "The dungeon claims another soul.");
+        sub.setFont(new Font("SansSerif", Font.PLAIN, 16));
         sub.setForeground(Color.WHITE);
 
-        JButton restart = new JButton("Play Again");
+        JButton restart = new JButton("Return to Menu");
+        restart.setFont(new Font("SansSerif", Font.BOLD, 14));
+        restart.setForeground(new Color(212, 175, 55));
+        restart.setBackground(new Color(0, 0, 0, 80));
+        restart.setBorder(BorderFactory.createLineBorder(new Color(212, 175, 55), 2));
+        restart.setFocusPainted(false);
+        restart.setContentAreaFilled(false);
+        restart.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
         restart.addActionListener(e -> {
-            // Reset game with NEW random riddles
-            initNewGame();  // ← This calls createRooms() which picks new random riddles
-            removeAll();
-            setLayout(new BorderLayout());
-            if (gamePanel != null) {
-                add(gamePanel, BorderLayout.CENTER);
-            } else {
-                createFallbackUI();
+            dialog.dispose();
+            if (onReturnToMenu != null) {
+                onReturnToMenu.run();
             }
-            loadLevel();
-            revalidate();
-            repaint();
         });
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.gridy = 0; add(msg, gbc);
-        gbc.gridy = 1; add(sub, gbc);
-        gbc.gridy = 2; add(restart, gbc);
+        gbc.insets = new Insets(15, 30, 15, 30);
+        gbc.gridy = 0; dialog.add(msg, gbc);
+        gbc.gridy = 1; dialog.add(sub, gbc);
+        gbc.gridy = 2; dialog.add(restart, gbc);
 
-        revalidate();
-        repaint();
+        dialog.pack();
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
     }
 }
